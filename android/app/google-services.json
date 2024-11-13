@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "388489657434",
+    "project_id": "powertani-d59e4",
+    "storage_bucket": "powertani-d59e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388489657434:android:1ef35ecc56dead91a0ec63",
+        "android_client_info": {
+          "package_name": "com.example.powertani"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh8Pn_jefMWWZ_VOVpYZskthEQcSjcoAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388489657434:android:343a5d0c9fc542ada0ec63",
+        "android_client_info": {
+          "package_name": "com.powertani.powertani"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh8Pn_jefMWWZ_VOVpYZskthEQcSjcoAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
