@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:powertani/Initial/pages/last_page.dart';
 import 'package:powertani/screens/home_screen.dart';
@@ -7,7 +8,12 @@ import 'pages/post_2.dart';
 import 'pages/post_3.dart';
 
 class StartingPage extends StatefulWidget {
-  const StartingPage({Key? key}) : super(key: key);
+  StartingPage({
+    Key? key,
+    this.user,
+  }) : super(key: key);
+
+  User? user;
 
   @override
   _StartingPageState createState() => _StartingPageState();
@@ -15,6 +21,7 @@ class StartingPage extends StatefulWidget {
 
 class _StartingPageState extends State<StartingPage> {
   final _controller = PageController();
+  double currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +56,19 @@ class _StartingPageState extends State<StartingPage> {
                 SmoothPageIndicator(
                   controller: _controller,
                   count: 4,
-                  effect: WormEffect(
-                    dotHeight: 10,
-                    dotWidth: 10,
-                    activeDotColor: const Color.fromARGB(255, 101, 214, 101),
-                    dotColor: Colors.grey,
+                  effect: CustomizableEffect(
+                    activeDotDecoration: DotDecoration(
+                      width: 15, // Swollen width for the active dot
+                      height: 10,
+                      color: const Color.fromARGB(255, 101, 214, 101),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    dotDecoration: DotDecoration(
+                      width: 10,
+                      height: 10,
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                 ),
               ],

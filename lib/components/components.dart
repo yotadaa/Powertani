@@ -1,6 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:powertani/constants.dart';
+import 'package:powertani/env.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+class PressableIconButton extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double borderRadius;
+
+  const PressableIconButton(
+      {required this.icon, required this.onTap, this.borderRadius = 100});
+
+  @override
+  _PressableIconButtonState createState() => _PressableIconButtonState();
+}
+
+class _PressableIconButtonState extends State<PressableIconButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) {
+        setState(() {
+          _isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 100),
+        width: _isPressed ? 44 : 48, // Shrinks when pressed
+        height: _isPressed ? 44 : 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          // shape: BoxShape.,
+          gradient: LinearGradient(
+            colors: [AppColors.primaryGreenLight, AppColors.primaryGreenDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: _isPressed
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+        ),
+        child: Icon(
+          widget.icon,
+          size: 24,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class CachedImage extends StatelessWidget {
+  CachedImage({
+    super.key,
+    this.width = 100,
+    this.height = 100,
+    this.fit = BoxFit.cover,
+    required this.src,
+  });
+
+  final BoxFit fit;
+  final double height;
+  final double width;
+
+  final String src;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(
+      fit: fit,
+      height: height,
+      width: width,
+      placeholder: (context, url) => const CircularProgressIndicator(),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+      imageUrl: src,
+      imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+    );
+  }
+}
 
 class CustomButton extends StatelessWidget {
   const CustomButton(

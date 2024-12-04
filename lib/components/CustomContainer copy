@@ -1,0 +1,155 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:powertani/Home/main.dart';
+import 'package:powertani/Profile/main.dart';
+
+class CustomContainer extends StatefulWidget {
+  final String? username;
+  final Map<String, dynamic> user;
+
+  CustomContainer({Key? key, this.username = '', required this.user})
+      : super(key: key);
+
+  @override
+  _CustomContainerState createState() => _CustomContainerState();
+}
+
+class _CustomContainerState extends State<CustomContainer> {
+  final double navigationHeight = 70;
+  late Widget _currentChild;
+
+  final Map<String, Widget> _widgetCache = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    _widgetCache['home'] = HomePage(user: widget.user);
+    _widgetCache['schedule'] = const Center(child: Text("Schedule Page"));
+    _widgetCache['profile'] = ProfilePage(user: widget.user);
+
+    _currentChild = _widgetCache['home']!; // Default view
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(widget.user);
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _currentChild,
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              height: navigationHeight,
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: NavigationBar(
+                menuItems: [
+                  {
+                    'key': 'home',
+                    'icon': const Icon(Icons.home),
+                    'text': 'Beranda'
+                  },
+                  {
+                    'key': 'schedule',
+                    'icon': CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.transparent,
+                      child: Image.asset(
+                        'assets/images/icons/spa.png',
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                    'text': 'Schedule',
+                  },
+                  {
+                    'key': 'profile',
+                    'icon': const Icon(Icons.account_circle_outlined),
+                    'text': 'Profil'
+                  },
+                ],
+                onItemSelected: (key) {
+                  setState(() {
+                    _currentChild = _widgetCache[key]!;
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NavigationBar extends StatelessWidget {
+  final List<Map<String, dynamic>> menuItems;
+  final Function(String) onItemSelected;
+
+  const NavigationBar(
+      {Key? key, required this.menuItems, required this.onItemSelected})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: menuItems.map((menuItem) {
+        return NavIcon(
+          icon: menuItem['icon'],
+          text: menuItem['text'],
+          onPressed: () => onItemSelected(menuItem['key']),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class NavIcon extends StatelessWidget {
+  const NavIcon({
+    Key? key,
+    required this.icon,
+    this.size = 30,
+    this.text = '',
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Widget icon;
+  final double size;
+  final String text;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IconButton(
+          onPressed: onPressed,
+          icon: icon,
+        ),
+        Text(
+          text,
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}

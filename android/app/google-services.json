@@ -12,7 +12,20 @@
           "package_name": "com.example.powertani"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "388489657434-amrnlqq0bue5c3943qvntl9ma1rlul0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.powertani",
+            "certificate_hash": "abdd7055bb3c80844dfb710c22b2a9e72c5b4d76"
+          }
+        },
+        {
+          "client_id": "388489657434-otpncl8vimfqlq4mrpfpngn7ad7lmfev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDh8Pn_jefMWWZ_VOVpYZskthEQcSjcoAE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388489657434-otpncl8vimfqlq4mrpfpngn7ad7lmfev.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "388489657434-t86ibcesdq54ne0c0ocg605h9soqlih8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.powertani"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.powertani.powertani"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "388489657434-otpncl8vimfqlq4mrpfpngn7ad7lmfev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDh8Pn_jefMWWZ_VOVpYZskthEQcSjcoAE"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388489657434-otpncl8vimfqlq4mrpfpngn7ad7lmfev.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "388489657434-t86ibcesdq54ne0c0ocg605h9soqlih8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.powertani"
+              }
+            }
+          ]
         }
       }
     }

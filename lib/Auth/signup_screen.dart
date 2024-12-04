@@ -28,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       // Simpan username dan email di Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'profil_picture': '',
         'name': usernameController.text.trim(),
         'username': usernameController.text.trim(),
         'email': emailController.text.trim(),

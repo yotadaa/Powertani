@@ -1,73 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:powertani/Auth/login_screen.dart';
+import 'package:powertani/Auth/authentication.dart';
+import 'package:powertani/Auth/loginContainer.dart';
 import 'package:powertani/components/auth.dart';
 import 'package:powertani/components/components.dart';
+import 'package:powertani/env.dart';
 import 'package:powertani/src/components/register.component.dart';
-import 'package:powertani/src/components/register_password.component.dart';
-
-class PopupLogin extends StatefulWidget {
-  const PopupLogin({
-    Key? key,
-    this.height = 300,
-    required this.showPopup,
-    required this.onClose,
-    required BuildContext context,
-  }) : super(key: key);
-
-  final double height;
-  final bool showPopup;
-  final VoidCallback onClose;
-
-  @override
-  State<PopupLogin> createState() => _PopupLoginState();
-}
-
-class _PopupLoginState extends State<PopupLogin> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: widget.height,
-      padding: EdgeInsets.all(30.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Column(
-          children: [
-            LoginView(
-              onLoginSuccess: () {},
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            AuthButton(
-              width: MediaQuery.of(context).size.width,
-              onPressed: widget.onClose,
-              text: "Kembali",
-              borderRadius: BorderRadius.circular(10.0),
-              bgColor: Colors.white,
-              txtColor: const Color.fromARGB(255, 61, 143, 75),
-              borderWidth: 2,
-              borderColor: const Color.fromARGB(255, 61, 143, 75),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   // Changed to StatefulWidget
@@ -78,11 +19,105 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // Added State class
   bool _showPopup = false;
-  double popupHeight = 400;
+  double popupHeight = 0;
   bool _keyboardVisible = false;
+
+  bool _isSigningIn = false;
+  late Animation<double> animation;
+  late AnimationController animationController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 3));
+    animation = Tween<double>(begin: 0, end: -300).animate(animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    if (mounted) {
+      setState(() {
+        _isSigningIn = true;
+      });
+    }
+
+    try {
+      // Initiate Google sign-in
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser != null) {
+        // Obtain the Google authentication details
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+
+        // Create a new credential using the token from Google Sign-In
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in with Firebase using the credential
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        User? user = userCredential.user;
+
+        if (user != null) {
+          // Check if the user already exists in Firestore
+          final userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+          if (!userDoc.exists) {
+            // Create a new user document in Firestore
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .set({
+              'name': user.displayName,
+              'email': user.email,
+              'profile_picture': user.photoURL,
+              'created_at': Timestamp.now(),
+              // Add any other user data you want to store
+            });
+          }
+
+          const AuthWrapper();
+
+          // Navigate to the HomeScreen
+          // await Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(builder: (context) {
+          //     return AuthWrapper();
+          //   }),
+          // );
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        print('Account exists with different credential');
+      } else if (e.code == 'invalid-credential') {
+        print('Invalid credential');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSigningIn = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,105 +127,104 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           Positioned(
-            child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 30),
               // Moved SafeArea to wrap the main content
-              child: Padding(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const TopScreenImage(screenImageName: 'home.png'),
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(0),
-                    //   child: Image.asset(
-                    //     'assets/images/home.png', // Make sure this path is correct
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 15.0, left: 15, bottom: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(0),
-                              child: Image.asset(
-                                'assets/images/PowerTani.png', // Make sure this path is correct
-                                height: 100,
-                                width: 300,
-                                fit: BoxFit.cover,
-                              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const TopScreenImage(screenImageName: 'home.png'),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 2,
+                    // padding: const EdgeInsets.only(
+                    // right: 15.0, left: 15, bottom: 15),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          right: 15.0, left: 15, bottom: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(0),
+                            child: Image.asset(
+                              'assets/images/PowerTani.png', // Make sure this path is correct
+                              height: 100,
+                              width: 300,
+                              fit: BoxFit.cover,
                             ),
-                            const Text(
-                              'Silahkan login atau daftar untuk melanjutkan',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 15,
-                              ),
+                          ),
+                          const Text(
+                            'Silahkan login atau daftar untuk melanjutkan',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
                             ),
-                            AuthButton(
-                              // Assuming AuthButton is a custom widget you have
-                              text: "Masuk",
-                              onPressed: () {
-                                setState(() {
-                                  _showPopup = true;
-                                });
-                              },
+                          ),
+                          AuthButton(
+                            // Assuming AuthButton is a custom widget you have
+                            bgColor: [
+                              AppColors.primaryGreenDark,
+                              AppColors.primaryGreenLight
+                            ],
+                            borderColor: AppColors.primaryGreenDark,
+                            text: "Masuk",
+                            onPressed: () {
+                              setState(() {
+                                _showPopup = true;
+                                popupHeight = 400;
+                              });
+                            },
+                          ),
+                          AuthButton(
+                            text: "Daftar",
+                            bgColor: Colors.white,
+                            txtColor: const Color.fromARGB(255, 61, 143, 75),
+                            borderWidth: 2,
+                            borderColor: AppColors.primaryGreenDark,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        // RegisterPasswordComponent(
+                                        //     title: 'Register')),
+                                        RegisterComponent(
+                                          title: 'Daftar',
+                                        )),
+                              );
+                              // Handle Daftar button press (e.g., navigate to registration screen)
+                            },
+                          ),
+                          const Text(
+                            'Sign up using',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
                             ),
-                            AuthButton(
-                              text: "Daftar",
-                              bgColor: Colors.white,
-                              txtColor: const Color.fromARGB(255, 61, 143, 75),
-                              borderWidth: 2,
-                              borderColor:
-                                  const Color.fromARGB(255, 61, 143, 75),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          // RegisterPasswordComponent(
-                                          //     title: 'Register')),
-                                          RegisterComponent(
-                                            title: 'Daftar',
-                                          )),
-                                );
-                                // Handle Daftar button press (e.g., navigate to registration screen)
-                              },
-                            ),
-                            const Text(
-                              'Sign up using',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    // Handle Google login
-                                  },
-                                  icon: CircleAvatar(
-                                    radius: 18,
-                                    backgroundColor: Colors.transparent,
-                                    child: Image.asset(
-                                        'assets/images/icons/google.png'), // Make sure this path is correct
-                                  ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  if (mounted) await signInWithGoogle(context);
+                                },
+                                icon: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.transparent,
+                                  child: Image.asset(
+                                      'assets/images/icons/google.png'), // Make sure this path is correct
                                 ),
-                              ],
-                            )
-                          ],
-                        ),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

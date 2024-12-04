@@ -1,0 +1,114 @@
+import 'package:flutter/material.dart';
+import 'package:powertani/Home/main.dart';
+import 'package:powertani/Profile/main.dart';
+
+class Navigation extends StatelessWidget {
+  final double navigationHeight;
+  const Navigation({
+    Key? key,
+    this.navigationHeight = 30,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> menuItems = [
+      {
+        'icon': Icon(Icons.home),
+        'text': 'Beranda',
+        'onPressed': () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomePage(user: {})),
+          );
+        },
+      },
+      {
+        'icon': CircleAvatar(
+          radius: 15,
+          backgroundColor: Colors.transparent,
+          child: Image.asset(
+            'assets/images/icons/spa.png',
+            width: 50,
+            height: 50,
+          ),
+        ),
+        'text': 'Schedule',
+        'onPressed': () {},
+      },
+      {
+        'icon': Icon(Icons.account_circle_outlined),
+        'text': 'Profil',
+        'onPressed': () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ProfilePage(user: {})),
+          );
+        },
+      },
+    ];
+
+    return Container(
+      height: navigationHeight,
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+            // topLeft: Radius.circular(12),
+            // topRight: Radius.circular(12),
+            ), // Add rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2), // Shadow color
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, -2), // Changes the shadow position
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: menuItems.map((menuItem) {
+          return NavIcon(
+            icon: menuItem['icon'],
+            text: menuItem['text'],
+            onPressed: menuItem['onPressed'],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class NavIcon extends StatelessWidget {
+  NavIcon({
+    Key? key,
+    required this.icon,
+    this.size = 30,
+    this.text = '',
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Widget icon;
+  final double size;
+  final String text;
+  void Function()? onPressed;
+
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IconButton(
+          onPressed: onPressed,
+          icon: icon,
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'Montserrat', // Set the font family to Montserrat
+            fontSize: 12, // You can adjust the font size as needed
+            fontWeight: FontWeight
+                .normal, // You can also change font weight (e.g., FontWeight.bold)
+          ),
+        ),
+      ],
+    );
+  }
+}

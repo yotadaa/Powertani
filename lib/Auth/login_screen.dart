@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:powertani/Auth/authentication.dart';
 import 'package:powertani/components/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginView extends StatefulWidget {
   final VoidCallback onLoginSuccess; // Callback for successful login
@@ -18,8 +21,54 @@ class _LoginViewState extends State<LoginView> {
   late FocusNode _focusNode1;
   late FocusNode _focusNode2;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String errorMessage = '';
+
+  Future<void> signIn() async {
+    try {
+      // Authenticate user with email and password
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Reference to the user's Firestore document
+        DocumentReference userDoc =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+        // Check if user data exists in Firestore
+        DocumentSnapshot docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          // If user data doesn't exist, create it
+          await userDoc.set({
+            'username': user.displayName ?? user.email?.split('@')[0],
+            'email': user.email,
+            'createdAt': Timestamp.now(),
+          });
+        }
+
+        // Navigate to AuthWrapper once Firestore operations are complete
+        if (mounted)
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => AuthWrapper()),
+          );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() {
+          errorMessage = ErrorMessages.getErrorMessage(e.code);
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -42,6 +91,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: [
           AuthTextField(
@@ -66,9 +116,13 @@ class _LoginViewState extends State<LoginView> {
             },
             obscureText: true,
           ),
+          SizedBox(
+            height: 30,
+          ),
+          Text(errorMessage),
           AuthButton(
             width: MediaQuery.of(context).size.width,
-            onPressed: widget.onLoginSuccess,
+            onPressed: signIn,
             text: "Login",
             borderRadius: BorderRadius.circular(10.0),
           ),
