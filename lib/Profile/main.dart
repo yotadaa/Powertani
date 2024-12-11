@@ -31,6 +31,14 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _controller = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    AuthWrapper();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print(widget.user);
     return Container(

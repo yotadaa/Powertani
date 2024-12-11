@@ -28,6 +28,8 @@ void main() async {
 
   Hive.registerAdapter(TanamanAdapter());
   Hive.registerAdapter(JenisTanamanAdapter());
+  await Hive.openBox<Tanaman>('tanamanBox');
+  await Hive.openBox<JenisTanaman>('jenisTanamanBox');
 
   await dotenv.load(fileName: ".env");
   await NotificationService().initialize();

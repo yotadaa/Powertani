@@ -163,87 +163,94 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                   children: [
                                     Column(
                                       children: [
-                                        CircleAvatar(
-                                            radius: 50,
-                                            backgroundColor: Colors.grey[
-                                                200], // Optional, for fallback background color
-                                            child: (_imageFile != null &&
-                                                    widget.user != "")
-                                                ? ImagePickerDisplay(
-                                                    imageFile: _imageFile,
-                                                    imgUrl: imgUrl,
-                                                    size: 90,
-                                                    borderRadius: 100,
-                                                  )
-                                                : (widget.user['profile_picture'] ==
-                                                            null ||
-                                                        widget.user[
-                                                                'profile_picture'] ==
-                                                            ""
-                                                    ? Image.asset(
-                                                        'assets/images/logo.png',
-                                                        width: 90,
-                                                        height: 90,
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(100),
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          imageUrl: widget.user[
-                                                              'profile_picture']!,
+                                        GestureDetector(
+                                          onTap: () {
+                                            print(widget.user);
+                                          },
+                                          child: CircleAvatar(
+                                              radius: 50,
+                                              backgroundColor: Colors.grey[
+                                                  200], // Optional, for fallback background color
+                                              child: (_imageFile != null &&
+                                                      widget.user != "")
+                                                  ? ImagePickerDisplay(
+                                                      imageFile: _imageFile,
+                                                      imgUrl: imgUrl,
+                                                      size: 90,
+                                                      borderRadius: 100,
+                                                    )
+                                                  : (widget.user['profile_picture'] ==
+                                                              null ||
+                                                          widget.user[
+                                                                  'profile_picture'] ==
+                                                              ""
+                                                      ? Image.asset(
+                                                          'assets/images/logo.png',
                                                           width: 90,
                                                           height: 90,
                                                           fit: BoxFit.cover,
-                                                        ),
-                                                      ))
-                                            // (widget.user[
-                                            //                 'profile_picture'] !=
-                                            //             null &&
-                                            //         widget.user[
-                                            //                 'profile_picture'] !=
-                                            //             "")
-                                            //     ? ((widget.user['profile_picture']!
-                                            //                 .contains(
-                                            //                     "https://") ||
-                                            //             (widget.user[
-                                            //                         'profile_picture']
-                                            //                     .contains(
-                                            //                         "http://") ||
-                                            //                 (widget.user[
-                                            //                         'profile_picture']
-                                            //                     .contains(
-                                            //                         "gs://")))
-                                            //         ? CachedNetworkImage(
-                                            //             imageUrl: widget.user[
-                                            //                 'profile_picture']!,
-                                            //             width: 80,
-                                            //             height: 80,
-                                            //             fit: BoxFit.cover,
-                                            //           )
-                                            //         : Image.asset(
-                                            //             widget.user[
-                                            //                 'profile_picture'],
-                                            //             width: 80,
-                                            //             height: 80,
-                                            //             fit: BoxFit.cover,
-                                            //           )))
-                                            //     : (_imageFile != null
-                                            //         ? ImagePickerDisplay(
-                                            //             imageFile: _imageFile,
-                                            //             imgUrl: imgUrl,
-                                            //             size: 90,
-                                            //             borderRadius: 100,
-                                            //           )
-                                            //         : Image.asset(
-                                            //             'assets/images/logo.png',
-                                            //             width: 90,
-                                            //             height: 90,
-                                            //             fit: BoxFit.cover,
-                                            //           )),
-                                            ),
+                                                        )
+                                                      : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100),
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            imageUrl: widget
+                                                                    .user[
+                                                                'profile_picture']!,
+                                                            width: 90,
+                                                            height: 90,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ))
+                                              // (widget.user[
+                                              //                 'profile_picture'] !=
+                                              //             null &&
+                                              //         widget.user[
+                                              //                 'profile_picture'] !=
+                                              //             "")
+                                              //     ? ((widget.user['profile_picture']!
+                                              //                 .contains(
+                                              //                     "https://") ||
+                                              //             (widget.user[
+                                              //                         'profile_picture']
+                                              //                     .contains(
+                                              //                         "http://") ||
+                                              //                 (widget.user[
+                                              //                         'profile_picture']
+                                              //                     .contains(
+                                              //                         "gs://")))
+                                              //         ? CachedNetworkImage(
+                                              //             imageUrl: widget.user[
+                                              //                 'profile_picture']!,
+                                              //             width: 80,
+                                              //             height: 80,
+                                              //             fit: BoxFit.cover,
+                                              //           )
+                                              //         : Image.asset(
+                                              //             widget.user[
+                                              //                 'profile_picture'],
+                                              //             width: 80,
+                                              //             height: 80,
+                                              //             fit: BoxFit.cover,
+                                              //           )))
+                                              //     : (_imageFile != null
+                                              //         ? ImagePickerDisplay(
+                                              //             imageFile: _imageFile,
+                                              //             imgUrl: imgUrl,
+                                              //             size: 90,
+                                              //             borderRadius: 100,
+                                              //           )
+                                              //         : Image.asset(
+                                              //             'assets/images/logo.png',
+                                              //             width: 90,
+                                              //             height: 90,
+                                              //             fit: BoxFit.cover,
+                                              //           )),
+                                              ),
+                                        ),
                                       ],
                                     ),
                                     Positioned(

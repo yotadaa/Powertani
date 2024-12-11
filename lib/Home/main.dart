@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:powertani/Home/EduTani.dart';
 import 'package:powertani/Home/Header.dart';
+import 'package:powertani/Home/Pencarian/main.dart';
 import 'package:powertani/Home/Search.dart';
 import 'package:powertani/Home/Weather.dart';
 import 'package:powertani/Home/DaftarMenu.dart';
 import 'package:powertani/OpenAI/OpenAIService.dart';
+import 'dart:convert'; // Import this for jsonDecode
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geocode;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:powertani/OpenAI/prompter.dart';
+import 'package:powertani/Tanaman/jenisTanaman.dart';
+import 'package:powertani/Tanaman/tanaman.dart';
 import 'package:powertani/components/Text.dart';
 
 enum AppState { NOT_DOWNLOADED, DOWNLOADING, FINISHED_DOWNLOADING }
@@ -34,11 +40,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final double navigationHeight = 70;
   final String? apiKeyId = dotenv.env['apiKeyId'] ?? '';
-
   final OpenAIServer openAiServer = OpenAIServer();
-
   final String apiKey =
-      '94eeeb8caa2b423584953817242311 '; // Replace with your API key
+      '579c99aaf8c043fb95e90132240912 '; // Replace with your API key
   final String apiUrl = 'https://api.weatherapi.com/v1/current.json';
   String cityName = 'London';
 
@@ -49,7 +53,17 @@ class _HomePageState extends State<HomePage> {
   String errorMessage = '';
   bool widgetWeatherSwells = false;
   double spacing = 20;
-  String response = "The text will appear here";
+  Map<dynamic, dynamic> response = {};
+  Box<Tanaman> tanamanBox = Hive.box<Tanaman>('tanamanBox');
+  Box<JenisTanaman> jenisTanamanBox = Hive.box<JenisTanaman>('jenisTanamanBox');
+  bool activateAI = false;
+  bool isSearching = true;
+
+  void toggleAI() {
+    setState(() {
+      activateAI = !activateAI;
+    });
+  }
 
   Future<void> fetchWeather() async {
     if (!mounted) return; // Cek apakah widget masih terpasang
@@ -189,12 +203,44 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<String?> generateResponse(String prompt) async {
-    String? apiKey = await openAiServer.getApiKey(apiKeyId!);
-    String? textResponse = await openAiServer.generateResponse(prompt, apiKey!);
-    setState(() {
-      this.response = textResponse!;
-    });
+  Future<void> generateResponse(String prompt) async {
+    try {
+      // Get the API key
+      String? apiKey = await openAiServer.getApiKey(apiKeyId!);
+
+      // Await the response from generateFilteredData
+      String res = await generateFilteredData(
+            apiKey!,
+            prompt,
+            jenisTanamanBox.values.toList(),
+            tanamanBox.values.toList(),
+          ) ??
+          ""; // Ensure a fallback in case the result is null
+
+      // Print the response for debugging
+      // print("response: $res");
+
+      // Convert the response string to a Map<dynamic, dynamic> if it's valid JSON
+      Map<dynamic, dynamic> jsonResponse = {};
+      if (res.isNotEmpty) {
+        try {
+          jsonResponse = jsonDecode(res); // Convert the JSON string to Map
+          // print(jsonResponse);
+        } catch (e) {
+          print("Error decoding JSON: $e");
+        }
+      }
+
+      // Update the state with the converted Map
+      setState(() {
+        this.response = jsonResponse;
+      });
+    } catch (e) {
+      print("Error generating response: $e");
+      setState(() {
+        this.response = {"message": "An Error Occured"};
+      });
+    }
   }
 
   @override
@@ -253,37 +299,69 @@ class _HomePageState extends State<HomePage> {
                           height: spacing,
                         ),
                         SearchBox(
+                          isSearching: isSearching,
+                          ai_active: activateAI,
                           controller: _searchController,
-                          onSearch: () => {
-                            print(_searchController.text.trim()),
-                            generateResponse(_searchController.text.trim()),
+                          toggleAI: toggleAI,
+                          onSearch: () async {
+                            print(apiKey);
+                            print("===================");
+
+                            if (activateAI) {
+                              setState(() {
+                                isSearching = false;
+                              });
+                              try {
+                                // Await the response from generateResponse
+                                await generateResponse(_searchController
+                                    .text); // Wait for the response to be ready
+
+                                // Navigate to the new screen after the response is ready
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        Pencarian(data: response),
+                                  ),
+                                );
+                              } catch (e) {
+                                print("error: $e");
+                              } finally {
+                                setState(() {
+                                  isSearching = false;
+                                });
+                              }
+                            }
+
+                            print("===================");
                           },
                         ),
-                        Container(
-                          width: MediaQuery.of(context)
-                              .size
-                              .width, // Constrain the width of the text
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    // Ensure the text takes available space and wraps
-                                    child: StdText(
-                                      text: response,
-                                      fontSize: 12,
-                                      font: "Montserrat",
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Container(
+                        //   width: MediaQuery.of(context)
+                        //       .size
+                        //       .width, // Constrain the width of the text
+                        //   child: Column(
+                        //     children: [
+                        //       SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       Row(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //           Expanded(
+                        //             // Ensure the text takes available space and wraps
+                        //             child: StdText(
+                        //               text: response,
+                        //               fontSize: 13,
+                        //               fontWeight: FontWeight.w500,
+                        //               font: "Montserrat",
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         const SizedBox(
                           height: 15,
                         ),

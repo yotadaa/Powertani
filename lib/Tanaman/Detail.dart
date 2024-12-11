@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:powertani/Tanaman/Selengkapnya/main.dart';
+import 'package:powertani/Tanaman/tanaman.dart';
 import 'package:powertani/components/Text.dart';
 
 class PlantDetailModal extends StatelessWidget {
@@ -9,6 +11,8 @@ class PlantDetailModal extends StatelessWidget {
   final bool isShowing;
   final VoidCallback onClose;
 
+  final Tanaman? tanaman;
+
   const PlantDetailModal({
     Key? key,
     this.imageUrl,
@@ -16,6 +20,7 @@ class PlantDetailModal extends StatelessWidget {
     required this.onClose,
     required this.title,
     required this.description,
+    this.tanaman,
   }) : super(key: key);
 
   @override
@@ -146,7 +151,15 @@ class PlantDetailModal extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: TextButton(
-                                  onPressed: () => {},
+                                  onPressed: () => {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailTanaman(
+                                                tanaman: tanaman,
+                                              )),
+                                    ),
+                                  },
                                   child: StdText(
                                     text: 'Selengkapnya',
                                     fontSize: 15,

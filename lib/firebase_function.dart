@@ -62,14 +62,16 @@ Future<Map<dynamic, dynamic>> updateUser(
       }
 
       // Update Firestore with the new user data
-      await collection.doc(existingDocument.id).update({
+      Map<dynamic, dynamic> updatedUser = {
         'displayName': user['displayName'] ?? user['name'],
         'name': user['name'] ?? user['displayName'],
         'email': currentUser.email, // Ensure the email is up-to-date
         'profile_picture': profilePicture.isNotEmpty
             ? profilePicture
             : existingDocument['profile_picture'],
-      });
+      };
+
+      await collection.doc(existingDocument.id).update(Map.from(updatedUser));
 
       print("User data updated successfully");
 
@@ -77,8 +79,9 @@ Future<Map<dynamic, dynamic>> updateUser(
         'displayName': user['displayName'] ?? user['name'],
         'name': user['name'] ?? user['displayName'],
         'email': currentUser.email, // Ensure the email is up-to-date
-        'profile_picture':
-            profilePicture ?? existingDocument['profile_picture'],
+        'profile_picture': profilePicture.isNotEmpty
+            ? profilePicture
+            : existingDocument['profile_picture'],
       };
     } else {
       print("User not found in Firestore.");

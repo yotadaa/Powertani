@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:powertani/Seeder/Firestore_seeder.dart';
 
 import 'package:powertani/Tanaman/Detail.dart';
 import 'package:powertani/Tanaman/jenisTanaman.dart';
@@ -35,6 +36,8 @@ class _TanamanContainerState extends State<TanamanContainer>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+
+  Tanaman? currentTanaman;
 
   int selectedCategory = 0;
 
@@ -150,6 +153,7 @@ class _TanamanContainerState extends State<TanamanContainer>
   @override
   void initState() {
     super.initState();
+    // FirestoreSeeder().download();
     // setState(() {
     //   widget.kategori = ["Semua", ...widget.kategori];
     // });
@@ -266,6 +270,7 @@ class _TanamanContainerState extends State<TanamanContainer>
                                   setState(() {
                                     // print(tanaman.kategori.contains(
                                     //     widget.kategori[selectedCategory]));
+                                    currentTanaman = tanaman;
                                     print("Start Tanaman");
                                     print(tanaman.img);
                                     print("End Tanaman");
@@ -419,6 +424,7 @@ class _TanamanContainerState extends State<TanamanContainer>
                                   title: detail["title"],
                                   description: detail["description"],
                                   isShowing: showDetail,
+                                  tanaman: currentTanaman,
                                   onClose: () {
                                     setState(() {
                                       showDetail = false;

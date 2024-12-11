@@ -34,6 +34,20 @@ class Tanaman {
     required this.lamaMasaTanam,
     required this.pupuk,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'namaTanaman': namaTanaman,
+      'namaLatin': namaLatin,
+      'deskripsi': deskripsi,
+      'img': img,
+      'kategori': kategori,
+      'jenisTanaman': jenisTanaman,
+      'musim': musim,
+      'lamaMasaTanam': lamaMasaTanam,
+      'pupuk': pupuk,
+    };
+  }
 }
 
 // List<Tanaman> tanamanPangan = [

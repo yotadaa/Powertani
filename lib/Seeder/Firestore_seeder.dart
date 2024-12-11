@@ -132,7 +132,7 @@ class FirestoreSeeder {
           deskripsi: doc['deskripsi'] as String,
           img: doc['img'] as String,
           kategori: List<String>.from(doc['kategori']),
-          jenisTanaman: doc['jenisTanaman'],
+          jenisTanaman: List<int>.from(doc['jenisTanaman']),
           musim: List<String>.from(doc['musim']),
           pupuk: List<String>.from(doc['pupuk']),
           lamaMasaTanam: List<int>.from(doc['lamaMasaTanam']),
@@ -141,22 +141,24 @@ class FirestoreSeeder {
 
       for (var tanaman in firestoreTanamanList) {
         // Check if this 'namaLatin' already exists in the local Hive database
-        var existingTanaman = boxTanamanList.firstWhere(
+        Tanaman? existingTanaman = boxTanamanList.firstWhere(
           (localTanaman) => localTanaman.namaLatin == tanaman.namaLatin,
-          orElse: () => Tanaman(
-            namaTanaman: '',
-            namaLatin: '',
-            deskripsi: '',
-            img: '',
-            kategori: [],
-            jenisTanaman: [],
-            musim: [],
-            pupuk: [''],
-            lamaMasaTanam: [0],
-          ),
+          orElse: () {
+            return Tanaman(
+              namaTanaman: '',
+              namaLatin: "null",
+              deskripsi: '',
+              img: '',
+              kategori: [],
+              jenisTanaman: [],
+              musim: [],
+              pupuk: [],
+              lamaMasaTanam: [],
+            );
+          },
         );
 
-        if (existingTanaman != null) {
+        if (existingTanaman.namaLatin != "null") {
           // If the tanaman exists in Hive, update it
           int index = boxTanamanList.indexOf(existingTanaman);
           await boxTanaman.putAt(

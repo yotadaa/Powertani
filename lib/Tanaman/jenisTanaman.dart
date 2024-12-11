@@ -28,6 +28,16 @@ class JenisTanaman {
     this.kategori = const [],
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'nama': nama,
+      'deskripsi': deskripsi,
+      'kategori': kategori,
+      'id': id,
+      'img': img,
+    };
+  }
+
   @override
   String toString() {
     return 'JenisTanaman(nama: $nama, deskripsi: $deskripsi, kategori: $kategori)';

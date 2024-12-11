@@ -186,10 +186,11 @@ class _AddTanamanState extends State<AddTanaman> {
       });
     } catch (e) {
     } finally {
-      setState(() {
-        isUploading = false;
-        resetForm();
-      });
+      if (mounted)
+        setState(() {
+          isUploading = false;
+          resetForm();
+        });
     }
   }
 
@@ -856,7 +857,7 @@ class _AddTanamanState extends State<AddTanaman> {
                           fontWeight: FontWeight.w500,
                           fontSize: 15),
                       onPressed: () {
-                        if (!isUploading) {
+                        if (true) {
                           _submitForm();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

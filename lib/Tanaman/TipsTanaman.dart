@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
+import 'package:powertani/Seeder/Firestore_seeder.dart';
 import 'package:powertani/Tanaman/AddTanaman.dart';
 import 'package:powertani/Tanaman/TanamanContainer.dart';
 import 'package:powertani/Tanaman/jenisTanaman.dart';
 import 'package:powertani/components/AppBar.dart';
 import 'package:powertani/components/ImageContainer.dart';
 import 'package:powertani/components/Text.dart';
-import 'package:powertani/components/auth.dart';
+// import 'package:powertani/components/auth.dart';
 import 'package:powertani/env.dart';
 
-class TipsTanaman extends StatelessWidget {
+class TipsTanaman extends StatefulWidget {
   TipsTanaman({super.key, required this.user});
 
   final Map<dynamic, dynamic> user;
 
-  Box<JenisTanaman> jenisTanamanBox = Hive.box<JenisTanaman>('jenisTanamanBox');
+  @override
+  State<TipsTanaman> createState() => _TipsTanamanState();
+}
+
+class _TipsTanamanState extends State<TipsTanaman> {
+  Box<JenisTanaman>? jenisTanamanBox;
+
+  Future<void> loadData() async {
+    Box<JenisTanaman> temp =
+        await Hive.openBox<JenisTanaman>('jenisTanamanBox');
+    setState(() {
+      jenisTanamanBox = temp;
+      print(jenisTanamanBox?.values);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirestoreSeeder().download();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +47,7 @@ class TipsTanaman extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: (user['admin'] ?? false)
+            child: (widget.user['admin'] ?? false)
                 ? Container(
                     padding: EdgeInsets.all(0),
                     decoration: BoxDecoration(
@@ -66,9 +89,11 @@ class TipsTanaman extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: jenisTanamanBox.values.toList().length,
+              itemCount: jenisTanamanBox != null
+                  ? jenisTanamanBox?.values.toList().length
+                  : 0,
               itemBuilder: (context, index) {
-                final tanaman = jenisTanamanBox.values.toList()[index];
+                final tanaman = jenisTanamanBox!.values.toList()[index];
                 print(tanaman.nama);
                 print(tanaman.img);
                 print(tanaman.id);
