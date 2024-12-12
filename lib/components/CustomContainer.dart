@@ -184,15 +184,7 @@ class _CustomContainerState extends State<CustomContainer> {
                   {'key': 0, 'icon': const Icon(Icons.home), 'text': 'Beranda'},
                   {
                     'key': 1,
-                    'icon': CircleAvatar(
-                      radius: 15,
-                      backgroundColor: Colors.transparent,
-                      child: Image.asset(
-                        'assets/images/icons/spa.png',
-                        width: 50,
-                        height: 50,
-                      ),
-                    ),
+                    'icon': const Icon(Icons.notification_add_outlined),
                     'text': 'Schedule',
                   },
                   {

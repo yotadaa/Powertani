@@ -52,10 +52,12 @@ class _PencarianState extends State<Pencarian> {
     // print("The data: $data");
     setState(() {
       // Extracting namaLatin values from filteredResults
-      List<String> namaLatins = widget.data['data'].length > 0
-          ? List<String>.from(widget.data['data'][0]['filteredResults']
-                  .map((result) => result as String) ??
-              [])
+      List<String> namaLatins = widget.data['data'] != null
+          ? widget.data['data'].length > 0
+              ? List<String>.from(widget.data['data'][0]['filteredResults']
+                      .map((result) => result as String) ??
+                  [])
+              : []
           : [];
 
       // Filtering tanamanBox where namaLatin is in the extracted list

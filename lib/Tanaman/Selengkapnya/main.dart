@@ -57,6 +57,41 @@ class DetailTanaman extends StatefulWidget {
 
 class _DetailTanamanState extends State<DetailTanaman> {
   Box<JenisTanaman> jenisTanamanBox = Hive.box<JenisTanaman>('jenisTanamanBox');
+  double _scale = 1.0;
+
+  double _scaleL = 1.0;
+
+  void _onTap() {
+    setState(() {
+      // Shrink the icon immediately
+      _scale = 0.8;
+    });
+
+    // After a short delay (e.g., 100ms), swell back to the original size
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        // Swell back to the original size
+        _scale = 1.0;
+      });
+    });
+  }
+
+  void _onTapL() {
+    setState(() {
+      // Shrink the icon immediately
+      _scaleL = 0.8;
+    });
+
+    // After a short delay (e.g., 200ms), swell back to the original size
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        // Swell back to the original size
+        _scaleL = 1.0;
+      });
+
+      Navigator.pop(context);
+    });
+  }
 
   Tanaman? currentTanaman;
   bool showDetail = false;
@@ -399,6 +434,118 @@ class _DetailTanamanState extends State<DetailTanaman> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: GestureDetector(
+                  onTap: _onTap, // Detect tap to trigger animation
+                  child: AnimatedScale(
+                    scale: _scale, // Use the current scale value
+                    duration: Duration(
+                        milliseconds: 300), // Duration of the animation
+                    curve: Curves
+                        .easeInOut, // Easing function for smooth animation
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: _onTap, // Detect tap to trigger animation
+                          child: AnimatedScale(
+                            scale: _scale, // The current scale value
+                            duration: Duration(
+                                milliseconds:
+                                    200), // Duration of the shrinking/swelling animation
+                            curve: Curves
+                                .easeInOut, // Easing curve for smooth transition
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 15,
+                                      blurStyle: BlurStyle.normal,
+                                      color: Colors.black.withOpacity(0.2),
+                                      offset: Offset(0, 0),
+                                      spreadRadius: 2,
+                                    )
+                                  ]),
+                              height: 50,
+                              width: 50,
+                              child: Icon(
+                                Icons.favorite,
+                                color: Colors.red, // Heart color
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: GestureDetector(
+                  onTap: () {
+                    _onTapL();
+                  }, // Detect tap to trigger animation
+                  child: AnimatedScale(
+                    scale: _scaleL, // Use the current scale value
+                    duration: Duration(
+                        milliseconds: 300), // Duration of the animation
+                    curve: Curves
+                        .easeInOut, // Easing function for smooth animation
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 15,
+                              blurStyle: BlurStyle.normal,
+                              color: Colors.black.withOpacity(0.2),
+                              offset: Offset(0, 0),
+                              spreadRadius: 2,
+                            )
+                          ]),
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: _onTapL, // Detect tap to trigger animation
+                          child: AnimatedScale(
+                            scale: _scaleL, // The current scale value
+                            duration: Duration(
+                                milliseconds:
+                                    200), // Duration of the shrinking/swelling animation
+                            curve: Curves
+                                .easeInOut, // Easing curve for smooth transition
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              height: 50,
+                              width: 50,
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Colors.black, // Heart color
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

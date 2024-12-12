@@ -10,6 +10,7 @@ class PlantDetailModal extends StatelessWidget {
   final String description;
   final bool isShowing;
   final VoidCallback onClose;
+  final VoidCallback closeDetail;
 
   final Tanaman? tanaman;
 
@@ -18,6 +19,7 @@ class PlantDetailModal extends StatelessWidget {
     this.imageUrl,
     this.isShowing = false,
     required this.onClose,
+    required this.closeDetail,
     required this.title,
     required this.description,
     this.tanaman,
@@ -151,14 +153,15 @@ class PlantDetailModal extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: TextButton(
-                                  onPressed: () => {
+                                  onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailTanaman(
                                                 tanaman: tanaman,
                                               )),
-                                    ),
+                                    );
+                                    closeDetail();
                                   },
                                   child: StdText(
                                     text: 'Selengkapnya',

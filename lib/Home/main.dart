@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:powertani/Auth/authentication.dart';
 import 'package:powertani/Home/EduTani.dart';
 import 'package:powertani/Home/Header.dart';
 import 'package:powertani/Home/Pencarian/main.dart';
@@ -190,9 +193,10 @@ class _HomePageState extends State<HomePage> {
           await geocode.placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         geocode.Placemark place = placemarks[0];
-        setState(() {
-          this.cityName = place.administrativeArea ?? "London";
-        });
+        if (mounted)
+          setState(() {
+            this.cityName = place.administrativeArea ?? "London";
+          });
 
         fetchWeather();
       } else {
@@ -243,9 +247,29 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> checkUpdate() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('users');
+    var querySnapshot =
+        await collection.where('email', isEqualTo: currentUser!.email).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var existingDocument = querySnapshot.docs.first;
+      if (mounted)
+        setState(() {
+          widget.user['profile_picture'] = existingDocument['profile_picture'];
+          widget.user = (existingDocument.data() as Map<String, dynamic>);
+        });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    checkUpdate();
+
     getLocation(context);
   }
 

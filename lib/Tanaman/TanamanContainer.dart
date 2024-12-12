@@ -125,9 +125,10 @@ class _TanamanContainerState extends State<TanamanContainer>
             firestoreTanaman.namaLatin == boxTanaman.namaLatin)));
 
     // Update the UI with the merged list
-    setState(() {
-      daftarTanaman = allTanaman;
-    });
+    if (mounted)
+      setState(() {
+        daftarTanaman = allTanaman;
+      });
 
     // Optionally, save the merged data back to Hive
     // for (var tanaman in allTanaman) {
@@ -420,6 +421,11 @@ class _TanamanContainerState extends State<TanamanContainer>
                                 padding: EdgeInsets.symmetric(vertical: 100),
                                 height: MediaQuery.of(context).size.height,
                                 child: PlantDetailModal(
+                                  closeDetail: () {
+                                    setState(() {
+                                      showDetail = false;
+                                    });
+                                  },
                                   imageUrl: detail["img"],
                                   title: detail["title"],
                                   description: detail["description"],

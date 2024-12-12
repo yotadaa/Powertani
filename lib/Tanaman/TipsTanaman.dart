@@ -5,6 +5,7 @@ import 'package:powertani/Seeder/Firestore_seeder.dart';
 import 'package:powertani/Tanaman/AddTanaman.dart';
 import 'package:powertani/Tanaman/TanamanContainer.dart';
 import 'package:powertani/Tanaman/jenisTanaman.dart';
+import 'package:powertani/Tanaman/tanaman.dart';
 import 'package:powertani/components/AppBar.dart';
 import 'package:powertani/components/ImageContainer.dart';
 import 'package:powertani/components/Text.dart';
@@ -22,13 +23,39 @@ class TipsTanaman extends StatefulWidget {
 
 class _TipsTanamanState extends State<TipsTanaman> {
   Box<JenisTanaman>? jenisTanamanBox;
+  Box<Tanaman>? tanamanBox;
+
+  int getCategoryCount(int categoryX) {
+    int count = 0;
+
+    for (var item in tanamanBox!.values.toList()) {
+      // Check if category X is in the item['category'] list
+      // print("================");
+      // print(
+      // "${item.jenisTanaman} ${categoryX} ${item.jenisTanaman.contains(categoryX)}");
+      if (item.jenisTanaman.contains(categoryX)) {
+        count++;
+        // print(count);
+      }
+    }
+
+    // print("================");
+    // print(tanamanBox!.values);
+    // print(count);
+    // print("================");
+
+    return count;
+  }
 
   Future<void> loadData() async {
     Box<JenisTanaman> temp =
         await Hive.openBox<JenisTanaman>('jenisTanamanBox');
+
+    Box<Tanaman> tempTanaman = await Hive.openBox<Tanaman>('tanamanBox');
     setState(() {
+      tanamanBox = tempTanaman;
       jenisTanamanBox = temp;
-      print(jenisTanamanBox?.values);
+      // print(jenisTanamanBox?.values);
     });
   }
 
@@ -94,9 +121,9 @@ class _TipsTanamanState extends State<TipsTanaman> {
                   : 0,
               itemBuilder: (context, index) {
                 final tanaman = jenisTanamanBox!.values.toList()[index];
-                print(tanaman.nama);
-                print(tanaman.img);
                 print(tanaman.id);
+                int count = getCategoryCount(tanaman.id);
+                print(count);
                 if (true) {
                   double borderRadius = 15;
                   return Padding(

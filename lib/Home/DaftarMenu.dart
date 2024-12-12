@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:powertani/Schedule/Schedule.dart';
 import 'package:powertani/Tanaman/Kalender/KalenderMusim.dart';
 import 'package:powertani/Tanaman/TipsTanaman.dart';
 import 'package:powertani/components/components.dart';
@@ -30,9 +31,15 @@ class _DaftarMenuState extends State<DaftarMenu> {
             },
       },
       {
-        "icon": Icons.book,
-        "label": "Teknik Bertani",
-        "route": () => {},
+        "icon": Icons.water_drop,
+        "label": "Jadwal Penyiraman",
+        "route": () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Schedule(user: widget.user)),
+              ),
+            },
       },
       {
         "icon": Icons.video_library,
@@ -66,8 +73,8 @@ class _DaftarMenuState extends State<DaftarMenu> {
         "route": () => {},
       },
       {
-        "icon": Icons.water_drop,
-        "label": "Jadwal Penyiraman",
+        "icon": Icons.book,
+        "label": "Teknik Bertani",
         "route": () => {},
       },
     ];

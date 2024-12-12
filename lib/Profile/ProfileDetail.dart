@@ -58,17 +58,24 @@ class _ProfileDetailState extends State<ProfileDetail> {
       isSubmitting = true;
     });
 
+    Map<dynamic, dynamic> updatedUser;
+
     try {
       // Check if _imageFile is not null before updating with the image
       if (_imageFile != null) {
         // Pass the image file if it's selected
         // File? imageCompressed = await compressImage(_imageFile!);
-        widget.user = await updateUser(newUser, _imageFile);
+        updatedUser = await updateUser(newUser, _imageFile);
       } else {
         // If no image is selected, update without the image
-        widget.user =
+        updatedUser =
             await updateUser(newUser, null); // Pass null if there's no image
       }
+      print(updatedUser);
+      setState(() {
+        widget.user = updatedUser;
+        widget.user['profile_picture'] = updatedUser['profile_picture'];
+      });
     } catch (e) {
       // Error handling: print and/or show a user-friendly error
       print("[Outter] Error updating user data: $e");

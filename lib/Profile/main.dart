@@ -1,11 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:powertani/Auth/authentication.dart';
 import 'package:powertani/Profile/ProfileDetail.dart';
-import 'package:powertani/components/CustomContainer.dart';
 import 'package:powertani/components/ProfileContainer.dart';
 import 'package:powertani/components/Text.dart';
-import 'package:powertani/components/auth.dart';
 import 'package:powertani/env.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -31,11 +29,29 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _controller = TextEditingController();
 
+  Future<void> checkUpdate() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('users');
+    var querySnapshot =
+        await collection.where('email', isEqualTo: currentUser!.email).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      var existingDocument = querySnapshot.docs.first;
+      setState(() {
+        widget.user['profile_picture'] = existingDocument['profile_picture'];
+        widget.user = (existingDocument.data() as Map<dynamic, dynamic>);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    checkUpdate();
 
-    AuthWrapper();
+    // AuthWrapper();
   }
 
   @override
