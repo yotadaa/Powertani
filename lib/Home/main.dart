@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:powertani/Auth/authentication.dart';
+import 'package:powertani/Gemini/Gemini.dart';
 import 'package:powertani/Home/EduTani.dart';
 import 'package:powertani/Home/Header.dart';
 import 'package:powertani/Home/Pencarian/main.dart';
@@ -48,6 +49,7 @@ class _HomePageState extends State<HomePage> {
       '579c99aaf8c043fb95e90132240912 '; // Replace with your API key
   final String apiUrl = 'https://api.weatherapi.com/v1/current.json';
   String cityName = 'London';
+  String geminiResponse = "";
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -80,7 +82,7 @@ class _HomePageState extends State<HomePage> {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
+        // print(data);
         if (!mounted) return; // Cek ulang sebelum setState
         setState(() {
           weatherData = data;
@@ -213,11 +215,10 @@ class _HomePageState extends State<HomePage> {
       String? apiKey = await openAiServer.getApiKey(apiKeyId!);
 
       // Await the response from generateFilteredData
-      String res = await generateFilteredData(
-            apiKey!,
-            prompt,
-            jenisTanamanBox.values.toList(),
-            tanamanBox.values.toList(),
+      String res = await getGeminiResponse(
+            customPrompt: prompt,
+            jenisTanamanData: jenisTanamanBox.values.toList(),
+            tanamanData: tanamanBox.values.toList(),
           ) ??
           ""; // Ensure a fallback in case the result is null
 
@@ -238,6 +239,7 @@ class _HomePageState extends State<HomePage> {
       // Update the state with the converted Map
       setState(() {
         this.response = jsonResponse;
+        print(jsonResponse);
       });
     } catch (e) {
       print("Error generating response: $e");
@@ -265,10 +267,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> getGemini() async {
+    // String temp = await getGeminiResponse();
+    // setState(() {
+    //   geminiResponse = temp;
+    // });
+  }
+
   @override
   void initState() {
     super.initState();
     checkUpdate();
+    // getGemini();
 
     getLocation(context);
   }
@@ -328,8 +338,8 @@ class _HomePageState extends State<HomePage> {
                           controller: _searchController,
                           toggleAI: toggleAI,
                           onSearch: () async {
-                            print(apiKey);
-                            print("===================");
+                            // print(apiKey);
+                            // print("===================");
 
                             if (activateAI) {
                               setState(() {
@@ -357,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                               }
                             }
 
-                            print("===================");
+                            // print("===================");
                           },
                         ),
                         // Container(
@@ -396,6 +406,11 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+                  StdText(
+                      text: geminiResponse,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      font: "Montserrat")
                 ],
               ),
             ),

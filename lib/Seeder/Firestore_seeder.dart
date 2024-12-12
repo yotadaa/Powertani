@@ -37,21 +37,13 @@ class FirestoreSeeder {
             // Jika sudah ada, update data tersebut
             String documentId = existingTanamanSnapshot.docs.first.id;
             await jenisTanamanCollection.doc(documentId).update(dataTanaman);
-            print('JenisTanaman updated in Firestore');
           } else {
             // Jika belum ada, tambah data baru ke Firestore
             await jenisTanamanCollection.add(dataTanaman);
-            print('JenisTanaman added to Firestore');
           }
-        } catch (e) {
-          print('Error adding or updating jenis tanaman in Firestore: $e');
-        }
+        } catch (e) {}
       }
-
-      print("Semua data berhasil diupload ke Firestore");
-    } catch (e) {
-      print("Gagal mengupload data ke Firestore: $e");
-    }
+    } catch (e) {}
   }
 
   Future<void> upload() async {
@@ -100,15 +92,11 @@ class FirestoreSeeder {
           // If the document exists, update it
           String documentId = existingTanamanSnapshot.docs.first.id;
           await tanamanCollection.doc(documentId).update(tanamanData);
-          print('Tanaman updated in Firestore');
         } else {
           // If the document does not exist, add it as a new document
           await tanamanCollection.add(tanamanData);
-          print('Tanaman added to Firestore');
         }
-      } catch (e) {
-        print('Error adding or updating tanaman in Firestore: $e');
-      }
+      } catch (e) {}
     }
   }
 
@@ -163,16 +151,12 @@ class FirestoreSeeder {
           int index = boxTanamanList.indexOf(existingTanaman);
           await boxTanaman.putAt(
               index, tanaman); // Update the existing entry in Hive
-          print('Updated $tanaman in Hive');
         } else {
           // If the tanaman doesn't exist in Hive, add it
           await boxTanaman.add(tanaman); // Add new item to Hive
-          print('Added $tanaman to Hive');
         }
       }
-    } catch (e) {
-      print('Error syncing Firestore data to local database: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> downloadJenisTanaman() async {
@@ -216,16 +200,11 @@ class FirestoreSeeder {
           int index = boxJenisTanamanList.indexOf(existingJenisTanaman);
           await boxJenisTanaman.putAt(
               index, jenisTanaman); // Update the existing entry in Hive
-          print('Updated $jenisTanaman in Hive');
-          print(jenisTanaman.img);
         } else {
           // If the jenisTanaman doesn't exist in Hive, add it
           await boxJenisTanaman.add(jenisTanaman); // Add new item to Hive
-          print('Added $jenisTanaman to Hive');
         }
       }
-    } catch (e) {
-      print('Error syncing Firestore data to local JenisTanaman database: $e');
-    }
+    } catch (e) {}
   }
 }

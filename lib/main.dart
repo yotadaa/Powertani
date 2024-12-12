@@ -14,6 +14,7 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 // import 'package:powertani/home_screen.dart';
 // import 'package:powertani/pageview/homepage.dart';
 // import 'package:powertani/screens/home_screen.dart';
@@ -21,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Gemini.init(apiKey: 'AIzaSyCh1vxCAMv4yBHYUsJ4csFWzXZV7_5K8hc');
   await Hive.initFlutter();
 
   final appDocumentDir = await getApplicationDocumentsDirectory();
@@ -38,15 +40,11 @@ void main() async {
   );
 
   try {
-    print("start uploading data");
     FirestoreSeeder().download();
     FirestoreSeeder().downloadJenisTanaman();
-    print("success uploading data");
   } catch (e) {
     print(e);
-  } finally {
-    print("success uploading data");
-  }
+  } finally {}
 
   runApp(const MyApp());
 }

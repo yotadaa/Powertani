@@ -24,6 +24,7 @@ class _PencarianState extends State<Pencarian> {
   void initState() {
     super.initState();
     loadData();
+    print("data: ${widget.data['filteredResults']}");
   }
 
   @override
@@ -52,12 +53,10 @@ class _PencarianState extends State<Pencarian> {
     // print("The data: $data");
     setState(() {
       // Extracting namaLatin values from filteredResults
-      List<String> namaLatins = widget.data['data'] != null
-          ? widget.data['data'].length > 0
-              ? List<String>.from(widget.data['data'][0]['filteredResults']
-                      .map((result) => result as String) ??
-                  [])
-              : []
+      List<String> namaLatins = widget.data['filteredResults'] != null
+          ? List<String>.from(widget.data['filteredResults']
+                  .map((result) => result as String) ??
+              [])
           : [];
 
       // Filtering tanamanBox where namaLatin is in the extracted list
@@ -138,80 +137,87 @@ class _PencarianState extends State<Pencarian> {
         //   detail['description'] = item.deskripsi;
         // });
       },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: item.img.isNotEmpty
-                  ? ((item.img.contains("https://") ||
-                          (item.img.contains("http://") ||
-                              (item.img.contains("gs://")))
-                      ? CachedNetworkImage(
-                          imageUrl: item.img!,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          item.img,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        )))
-                  : Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey[600],
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: Container(
+          padding: EdgeInsets.all(8),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 5,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: item.img.isNotEmpty
+                        ? ((item.img.contains("https://") ||
+                                (item.img.contains("http://") ||
+                                    (item.img.contains("gs://")))
+                            ? CachedNetworkImage(
+                                imageUrl: item.img!,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                item.img,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              )))
+                        : Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey[300],
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StdText(
+                            text: item.namaTanaman,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 4),
+                          StdText(
+                            text: item.namaLatin,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 4),
+                          StdText(
+                            text: _getFirst20Words(item.deskripsi),
+                            fontSize: 12,
+                          ),
+                        ],
                       ),
                     ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    StdText(
-                      text: item.namaTanaman,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    const SizedBox(height: 4),
-                    StdText(
-                      text: item.namaLatin,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 4),
-                    StdText(
-                      text: _getFirst20Words(item.deskripsi),
-                      fontSize: 12,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
